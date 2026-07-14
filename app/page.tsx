@@ -1,29 +1,29 @@
 import Hero from "../components/Hero";
 import Countdown from "../components/Countdown";
+import Timeline from "../components/Timeline";
 import Gallery from "../components/Gallery";
 import Letter from "../components/Letter";
 import MusicPlayer from "../components/MusicPlayer";
-import ConfettiEffect from "../components/ConfettiEffect";
 import Particles from "../components/Particles";
 
 export default function Home() {
   return (
-    <main className="relative min-h-screen selection:bg-pink-500/30 selection:text-pink-100">
-      {/* Sistem Latar Belakang Ganda (Dual Background System) */}
-      <ConfettiEffect />
+    <main className="relative min-h-screen">
+      {/* 
+        Hanya menggunakan Particles CSS ringan.
+        Confetti dihapus dari background global untuk menghindari lag, 
+        dipindahkan ke komponen Letter sebagai kejutan klik.
+      */}
       <Particles />
       
-      {/* Container utama konten. 
-        Masing-masing section memiliki index z-10 agar selalu berada di atas efek background.
-      */}
       <div className="relative z-10 flex flex-col w-full pb-20">
         <Hero />
         <Countdown />
+        <Timeline /> {/* EKSPANSI: Komponen baru perjalanan cinta */}
         <Gallery />
         <Letter />
       </div>
 
-      {/* Floating UI */}
       <MusicPlayer />
     </main>
   );

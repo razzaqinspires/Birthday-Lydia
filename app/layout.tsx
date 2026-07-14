@@ -3,7 +3,6 @@ import SmoothScroll from "../components/SmoothScroll";
 import type { Metadata } from "next";
 import { Cormorant_Garamond, Montserrat, Great_Vibes } from "next/font/google";
 
-// 1. Font Klasik & Elegan untuk Heading
 const cormorant = Cormorant_Garamond({
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700"],
@@ -11,7 +10,6 @@ const cormorant = Cormorant_Garamond({
   display: "swap",
 });
 
-// 2. Font Modern & Bersih untuk Paragraf
 const montserrat = Montserrat({
   subsets: ["latin"],
   weight: ["300", "400", "500"],
@@ -19,7 +17,6 @@ const montserrat = Montserrat({
   display: "swap",
 });
 
-// 3. Font Tulisan Tangan untuk Sentuhan Romantis
 const greatVibes = Great_Vibes({
   subsets: ["latin"],
   weight: ["400"],
@@ -28,9 +25,9 @@ const greatVibes = Great_Vibes({
 });
 
 export const metadata: Metadata = {
-  title: "Happy Birthday Cici ❤️",
+  title: "Happy Birthday Cici 🎀",
   description: "A Special Gift for March 8, 2027",
-  themeColor: "#4c1d95",
+  themeColor: "#fbcfe8",
 };
 
 export default function RootLayout({
@@ -40,7 +37,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="id" className="antialiased">
-      <body className={`${cormorant.variable} ${montserrat.variable} ${greatVibes.variable} font-sans bg-[#0a0514] text-white overflow-x-hidden`}>
+      <body className={`${cormorant.variable} ${montserrat.variable} ${greatVibes.variable} font-sans overflow-x-hidden selection:bg-pink-300 selection:text-white`}>
         <SmoothScroll>{children}</SmoothScroll>
       </body>
     </html>

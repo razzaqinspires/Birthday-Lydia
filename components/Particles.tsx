@@ -1,109 +1,78 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
 
-// Mendefinisikan tipe data untuk sistem partikel
-type ParticleType = "sakura" | "heart" | "star";
-
-interface Particle {
-  id: number;
-  type: ParticleType;
-  startX: number;
-  startY: number;
-  scale: number;
-  duration: number;
-  delay: number;
-}
-
+// Zero-Lag CSS Particle System (Hardware Accelerated)
 export default function Particles() {
-  const [particles, setParticles] = useState<Particle[]>([]);
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
     setIsMounted(true);
-
-    // Mencegah Hydration Mismatch dengan meng-generate data random hanya di sisi Client
-    if (typeof window !== "undefined") {
-      const generateParticles = (): Particle[] => {
-        const newParticles: Particle[] = [];
-        const types: ParticleType[] = ["sakura", "heart", "star"];
-        
-        // Membatasi 30 partikel agar menjaga 60fps di HP (iPhone/Android)
-        for (let i = 0; i < 30; i++) {
-          newParticles.push({
-            id: i,
-            type: types[Math.floor(Math.random() * types.length)],
-            startX: Math.random() * window.innerWidth,
-            startY: Math.random() * window.innerHeight,
-            scale: Math.random() * 0.8 + 0.4, // Ukuran bervariasi antara 0.4x hingga 1.2x
-            duration: Math.random() * 10 + 10, // Durasi animasi 10-20 detik
-            delay: Math.random() * 5, // Delay agar tidak muncul bersamaan
-          });
-        }
-        return newParticles;
-      };
-
-      setParticles(generateParticles());
-    }
   }, []);
 
-  // Jangan render apapun di server untuk mencegah Hydration Error
   if (!isMounted) return null;
+
+  // Membuat partikel acak hanya di klien untuk mencegah Hydration Error
+  const particles = Array.from({ length: 25 }).map((_, i) => ({
+    id: i,
+    left: `${Math.random() * 100}%`,
+    animationDuration: `${Math.random() * 10 + 10}s`, // 10s - 20s
+    animationDelay: `-${Math.random() * 10}s`,
+    scale: Math.random() * 0.6 + 0.4,
+    type: Math.random() > 0.5 ? "🌸" : "✨",
+  }));
 
   return (
     <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-      {particles.map((particle) => {
-        // Logika pergerakan berdasarkan tipe elemen
-        let animateProps = {};
-        let initialProps = {};
-
-        if (particle.type === "sakura") {
-          // Sakura jatuh dari atas ke bawah sambil berputar
-          initialProps = { y: -50, x: particle.startX, opacity: 0, rotate: 0, scale: particle.scale };
-          animateProps = { 
-            y: window.innerHeight + 100, 
-            x: particle.startX + (Math.random() * 200 - 100), // Berayun ke kiri/kanan
-            opacity: [0, 1, 1, 0], 
-            rotate: 360 
-          };
-        } else if (particle.type === "heart") {
-          // Hati melayang dari bawah ke atas seperti balon
-          initialProps = { y: window.innerHeight + 50, x: particle.startX, opacity: 0, scale: particle.scale };
-          animateProps = { 
-            y: -100, 
-            x: particle.startX + (Math.random() * 100 - 50),
-            opacity: [0, 1, 0.8, 0],
-          };
-        } else if (particle.type === "star") {
-          // Bintang berkelip dan bergerak sangat lambat
-          initialProps = { y: particle.startY, x: particle.startX, opacity: 0, scale: particle.scale };
-          animateProps = {
-            opacity: [0, 1, 0.2, 1, 0],
-            scale: [particle.scale, particle.scale * 1.5, particle.scale],
-            y: particle.startY - 50,
-          };
+      {/* 
+        INJEKSI CSS MURNI: Sangat ringan karena di-render oleh GPU, bukan CPU JS.
+        Ini yang membuat animasi menjadi 60fps tanpa lag sama sekali.
+      */}
+      <style suppressHydrationWarning>{`
+        @keyframes floatUpSoftly {
+          0% {
+            transform: translateY(110vh) translateX(0) rotate(0deg);
+            opacity: 0;
+          }
+          10% {
+            opacity: 0.8;
+          }
+          90% {
+            opacity: 0.8;
+          }
+          100% {
+            transform: translateY(-10vh) translateX(50px) rotate(360deg);
+            opacity: 0;
+          }
         }
+        .particle-cute {
+          position: absolute;
+          top: 0;
+          font-size: 1.5rem;
+          will-change: transform, opacity;
+          animation: floatUpSoftly linear infinite;
+          filter: drop-shadow(0 2px 4px rgba(244, 114, 182, 0.3));
+        }
+      `}</style>
 
-        const emojis = { sakura: "🌸", heart: "💖", star: "✨" };
+      {/* Ornamen cahaya blur statis di sudut agar aesthetic */}
+      <div className="absolute top-[-10%] left-[-10%] w-96 h-96 bg-pink-300/30 rounded-full blur-[100px]"></div>
+      <div className="absolute bottom-[-10%] right-[-10%] w-96 h-96 bg-purple-300/30 rounded-full blur-[100px]"></div>
 
-        return (
-          <motion.div
-            key={particle.id}
-            className="absolute text-2xl drop-shadow-lg"
-            initial={initialProps}
-            animate={animateProps}
-            transition={{
-              duration: particle.duration,
-              repeat: Infinity,
-              delay: particle.delay,
-              ease: "linear",
-            }}
-          >
-            {emojis[particle.type]}
-          </motion.div>
-        );
-      })}
+      {particles.map((p) => (
+        <div
+          key={p.id}
+          className="particle-cute"
+          style={{
+            left: p.left,
+            animationDuration: p.animationDuration,
+            animationDelay: p.animationDelay,
+            transform: `scale(${p.scale})`,
+          }}
+        >
+          {p.type}
+        </div>
+      ))}
     </div>
   );
 }

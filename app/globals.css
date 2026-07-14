@@ -7,20 +7,31 @@
 }
 
 :root {
-  --glass-border: rgba(255, 255, 255, 0.08);
-  --glass-bg: rgba(255, 255, 255, 0.03);
-  --glass-highlight: rgba(255, 255, 255, 0.15);
+  --glass-border: rgba(255, 255, 255, 0.4);
+  --glass-bg: rgba(255, 255, 255, 0.15);
+  --glass-highlight: rgba(255, 255, 255, 0.8);
 }
 
 body {
   margin: 0;
   padding: 0;
-  background-color: #05010a; /* Hitam keunguan yang sangat pekat */
+  /* Palet warna Soft Pink Aesthetic / Coquette */
+  background: linear-gradient(135deg, #fff0f5, #ffe4e6, #fbcfe8, #fce7f3);
+  background-size: 400% 400%;
+  animation: gradientSoft 15s ease infinite;
+  color: #4a4a4a;
 }
 
-/* Sistem Tipografi Tingkat Lanjut */
+@keyframes gradientSoft {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Sistem Tipografi Soft */
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-serif);
+  color: #831843; /* Pink tua gelap */
 }
 
 p, span, div {
@@ -31,32 +42,39 @@ p, span, div {
   font-family: var(--font-handwriting) !important;
 }
 
-/* Glassmorphism 2.0 - Ultra Premium */
+/* Glassmorphism Frosted White (Sangat Halus & Ringan) */
 .glass-panel {
   background: var(--glass-bg);
-  backdrop-filter: blur(32px);
-  -webkit-backdrop-filter: blur(32px);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   border: 1px solid var(--glass-border);
-  box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.5), inset 0 1px 0 var(--glass-highlight);
+  box-shadow: 0 8px 32px 0 rgba(244, 114, 182, 0.1), inset 0 1px 0 var(--glass-highlight);
+  border-radius: 2rem;
 }
 
-.glass-panel-light {
-  background: rgba(255, 255, 255, 0.07);
-  backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.2);
-}
-
-/* Efek Foto Editorial */
+/* Efek Polaroid Lucu */
 .polaroid {
-  background: #fdfbf7; /* Warna kertas off-white */
-  padding: 16px 16px 64px 16px;
-  box-shadow: 0 20px 40px rgba(0,0,0,0.4), inset 0 0 40px rgba(0,0,0,0.02);
-  transition: all 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+  background: #ffffff;
+  padding: 14px 14px 50px 14px;
+  border-radius: 4px;
+  box-shadow: 0 10px 20px rgba(244, 114, 182, 0.15), inset 0 0 10px rgba(0,0,0,0.02);
+  transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 .polaroid:hover {
-  transform: scale(1.1) rotate(0deg) translateY(-10px) !important;
+  transform: scale(1.05) rotate(0deg) translateY(-5px) !important;
   z-index: 50;
-  box-shadow: 0 30px 60px rgba(0,0,0,0.6), 0 0 40px rgba(236, 72, 153, 0.3);
+  box-shadow: 0 20px 40px rgba(244, 114, 182, 0.3), 0 0 20px rgba(255, 255, 255, 0.8);
+}
+
+/* Custom Scrollbar Cute */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #fff0f5; 
+}
+::-webkit-scrollbar-thumb {
+  background: #f9a8d4; 
+  border-radius: 10px;
 }
