@@ -1,6 +1,6 @@
 "use client";
 
-import { useCountdown } from "@/hooks/useCountdown";
+import { useCountdown } from "../hooks/useCountdown";
 import { motion } from "framer-motion";
 
 interface TimeBoxProps {
