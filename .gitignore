@@ -37,15 +37,3 @@ yarn-error.log*
 
 # typescript
 *.tsbuildinfo
-
-# -----------------------------------------------------------------
-# CUSTOM MEDIA FILES (File media yang dikecualikan)
-# -----------------------------------------------------------------
-public/audio/bgm.mp3
-public/img/file.img
-
-# (Opsional) Jika ke depannya kamu ingin mengabaikan semua file 
-# di dalam folder audio/img agar tidak ter-push ke GitHub, 
-# kamu bisa menghapus tanda '#' di bawah ini:
-# public/audio/*
-# public/img/*
