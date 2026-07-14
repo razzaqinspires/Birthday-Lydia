@@ -1,0 +1,51 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
+
+# testing
+/coverage
+
+# next.js
+/.next/
+/out/
+
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# local env files
+.env*.local
+.env
+.env.development.local
+.env.test.local
+.env.production.local
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+
+# -----------------------------------------------------------------
+# CUSTOM MEDIA FILES (File media yang dikecualikan)
+# -----------------------------------------------------------------
+public/audio/bgm.mp3
+public/img/file.img
+
+# (Opsional) Jika ke depannya kamu ingin mengabaikan semua file 
+# di dalam folder audio/img agar tidak ter-push ke GitHub, 
+# kamu bisa menghapus tanda '#' di bawah ini:
+# public/audio/*
+# public/img/*
