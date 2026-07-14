@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Heart } from "lucide-react";
 
 export default function Letter() {
   const [isOpen, setIsOpen] = useState(false);
@@ -10,63 +9,72 @@ export default function Letter() {
   return (
     <section className="py-40 flex flex-col items-center justify-center z-10 relative px-6">
       <motion.div
-        initial={{ opacity: 0, scale: 0.9 }}
-        whileInView={{ opacity: 1, scale: 1 }}
+        initial={{ opacity: 0, y: 50 }}
+        whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
-        transition={{ duration: 0.8 }}
-        className="w-full max-w-3xl"
+        transition={{ duration: 1.2 }}
+        className="w-full max-w-4xl"
       >
         <div 
-          className="glass-panel w-full p-10 md:p-16 rounded-[2.5rem] cursor-pointer relative overflow-hidden group shadow-2xl transition-all duration-500 hover:shadow-pink-500/20 hover:border-pink-300/30"
+          className="glass-panel w-full p-12 md:p-20 rounded-[2rem] cursor-pointer relative overflow-hidden group transition-all duration-700 hover:shadow-[0_0_60px_rgba(244,114,182,0.15)]"
           onClick={() => setIsOpen(!isOpen)}
         >
-          <div className="absolute inset-0 bg-gradient-to-b from-white/5 to-transparent pointer-events-none"></div>
-          
-          <div className="flex flex-col items-center justify-center space-y-6 relative z-10">
+          {/* Ornamen Wax Seal (Stempel Lilin Klasik) */}
+          <div className="flex flex-col items-center justify-center space-y-8 relative z-10">
             <motion.div
               animate={{ 
-                scale: isOpen ? 1.2 : 1,
-                rotate: isOpen ? 0 : [0, 5, -5, 0]
+                scale: isOpen ? 1.5 : 1,
+                opacity: isOpen ? 0 : 1
               }}
-              transition={{ repeat: isOpen ? 0 : Infinity, duration: 2, ease: "easeInOut" }}
+              transition={{ duration: 0.6 }}
+              className="w-20 h-20 bg-gradient-to-br from-red-700 to-red-950 rounded-full flex items-center justify-center shadow-lg border-[3px] border-red-900/50 relative"
             >
-              <Heart 
-                size={64} 
-                className={`${isOpen ? 'fill-pink-500 text-pink-500' : 'text-pink-300 group-hover:text-pink-200 group-hover:fill-pink-300/50'} transition-all duration-500`} 
-              />
+              <span className="font-script text-3xl text-red-200">C</span>
+              {/* Lelehan lilin imitasi */}
+              <div className="absolute -bottom-2 right-2 w-3 h-4 bg-red-900 rounded-full"></div>
+              <div className="absolute top-2 -left-1 w-2 h-2 bg-red-800 rounded-full"></div>
             </motion.div>
-            <p className="text-sm md:text-base text-white/60 font-medium tracking-widest uppercase">
-              {isOpen ? "Tutup Surat" : "Ketuk untuk Membuka Surat"}
+            
+            <p className="font-sans text-xs tracking-[0.4em] uppercase text-white/50 group-hover:text-pink-200 transition-colors">
+              {isOpen ? "" : "Pecahkan segel untuk membaca"}
             </p>
           </div>
 
           <AnimatePresence>
             {isOpen && (
               <motion.div
-                initial={{ height: 0, opacity: 0, y: -20 }}
-                animate={{ height: "auto", opacity: 1, y: 0 }}
-                exit={{ height: 0, opacity: 0, y: -20 }}
-                transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-                className="overflow-hidden relative z-10"
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: "auto", opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                className="overflow-hidden relative z-10 mt-0"
               >
-                <div className="mt-10 bg-white/95 backdrop-blur-xl text-gray-800 p-8 md:p-12 rounded-2xl shadow-inner border border-gray-100">
-                  <h3 className="mb-6 font-bold text-2xl md:text-3xl text-pink-900 border-b border-pink-100 pb-4">
-                    Hai Sayang,
+                <div className="mt-4 bg-[#fbf9f6] text-gray-800 p-10 md:p-16 rounded-xl shadow-2xl relative">
+                  {/* Watermark Bunga di dalam surat */}
+                  <div className="absolute inset-0 opacity-[0.03] pointer-events-none flex items-center justify-center">
+                    <span className="text-[20rem]">🌸</span>
+                  </div>
+
+                  <h3 className="font-serif text-3xl md:text-4xl text-gray-900 mb-8">
+                    Cici Sayang,
                   </h3>
-                  <div className="space-y-4 text-base md:text-lg leading-relaxed text-gray-600 font-medium text-justify">
+                  
+                  <div className="font-serif text-lg md:text-xl leading-relaxed text-gray-700 space-y-6 text-justify relative z-10">
                     <p>
-                      Selamat ulang tahun! Waktu terus berjalan menuju tanggal 8 Maret 2027, dan aku tidak sabar untuk merayakan momen berharga itu bersamamu.
+                      Selamat ulang tahun. Saat kamu membaca surat ini, mungkin kamu akan tersenyum melihat hitungan mundur yang terus berjalan. Setiap detik yang berlalu adalah pengingat bahwa hari bahagiamu semakin dekat.
                     </p>
                     <p>
-                      Setiap baris kode di website ini aku tulis khusus untukmu. Mungkin ini bukan hadiah yang mewah, tapi ini adalah caraku mengabadikan perasaan dan waktu yang kita miliki.
+                      Aku sengaja merangkai barisan kode ini, menyatukan desain, warna, dan memori kita menjadi satu tempat khusus yang hanya milik kita. Alam semesta mungkin sangat luas, tapi duniaku selalu berpusat padamu.
                     </p>
                     <p>
-                      Semoga kamu selalu bahagia, sehat, dan segala hal baik selalu mengelilingimu. Mari ukir lebih banyak kenangan bersama hingga hari itu tiba, dan seterusnya.
+                      Tetaplah bersinar, tetaplah menjadi dirimu yang luar biasa. Semoga tahun ini membawa lebih banyak tawa, kedamaian, dan memori indah yang akan kita isi di bingkai-bingkai foto berikutnya.
                     </p>
                   </div>
-                  <p className="text-right font-bold text-pink-600 mt-10 text-xl font-serif italic">
-                    - Yang selalu mencintaimu ❤️
-                  </p>
+
+                  <div className="mt-16 text-right relative z-10">
+                    <p className="font-sans text-sm tracking-widest uppercase text-gray-400 mb-4">Selamanya milikmu,</p>
+                    <p className="font-script text-5xl text-pink-700">Aku ❤️</p>
+                  </div>
                 </div>
               </motion.div>
             )}

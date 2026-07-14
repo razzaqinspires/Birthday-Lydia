@@ -1,36 +1,36 @@
 import "./globals.css";
 import SmoothScroll from "../components/SmoothScroll";
 import type { Metadata } from "next";
-import { Playfair_Display, Montserrat, Great_Vibes } from "next/font/google";
+import { Cormorant_Garamond, Montserrat, Great_Vibes } from "next/font/google";
 
-// Injeksi Font Premium
-const playfair = Playfair_Display({ 
-  subsets: ["latin"], 
-  variable: "--font-playfair",
-  weight: ["400", "500", "600", "700", "800", "900"],
+// 1. Font Klasik & Elegan untuk Heading
+const cormorant = Cormorant_Garamond({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
+  variable: "--font-cormorant",
+  display: "swap",
 });
 
-const montserrat = Montserrat({ 
-  subsets: ["latin"], 
+// 2. Font Modern & Bersih untuk Paragraf
+const montserrat = Montserrat({
+  subsets: ["latin"],
+  weight: ["300", "400", "500"],
   variable: "--font-montserrat",
-  weight: ["300", "400", "500", "600"],
+  display: "swap",
 });
 
-const greatVibes = Great_Vibes({ 
-  weight: "400", 
-  subsets: ["latin"], 
-  variable: "--font-vibes" 
+// 3. Font Tulisan Tangan untuk Sentuhan Romantis
+const greatVibes = Great_Vibes({
+  subsets: ["latin"],
+  weight: ["400"],
+  variable: "--font-great-vibes",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "Happy Birthday Sayang ❤️",
+  title: "Happy Birthday Cici ❤️",
   description: "A Special Gift for March 8, 2027",
-  themeColor: "#9d174d",
-  appleWebApp: {
-    capable: true,
-    statusBarStyle: "black-translucent",
-    title: "Happy B-Day",
-  },
+  themeColor: "#4c1d95",
 };
 
 export default function RootLayout({
@@ -39,8 +39,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="id" className={`${playfair.variable} ${montserrat.variable} ${greatVibes.variable} antialiased`}>
-      <body className="font-montserrat">
+    <html lang="id" className="antialiased">
+      <body className={`${cormorant.variable} ${montserrat.variable} ${greatVibes.variable} font-sans bg-[#0a0514] text-white overflow-x-hidden`}>
         <SmoothScroll>{children}</SmoothScroll>
       </body>
     </html>
