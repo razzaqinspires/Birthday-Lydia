@@ -1,37 +1,37 @@
 @import "tailwindcss";
 
 @theme {
-  --font-serif: var(--font-cormorant);
+  --font-serif: var(--font-playfair);
   --font-sans: var(--font-montserrat);
-  --font-handwriting: var(--font-great-vibes);
+  --font-handwriting: var(--font-alex-brush);
 }
 
 :root {
-  --glass-border: rgba(255, 255, 255, 0.4);
-  --glass-bg: rgba(255, 255, 255, 0.15);
-  --glass-highlight: rgba(255, 255, 255, 0.8);
+  --luxury-glass-border: rgba(255, 230, 240, 0.6);
+  --luxury-glass-bg: rgba(255, 255, 255, 0.25);
+  --luxury-glass-highlight: rgba(255, 255, 255, 0.9);
 }
 
 body {
   margin: 0;
   padding: 0;
-  /* Palet warna Soft Pink Aesthetic / Coquette */
-  background: linear-gradient(135deg, #fff0f5, #ffe4e6, #fbcfe8, #fce7f3);
+  /* Palet Luxury Soft Pink / Rose Gold */
+  background: linear-gradient(135deg, #fef5f7, #fdf2f8, #fce7f3, #fff0f5);
   background-size: 400% 400%;
-  animation: gradientSoft 15s ease infinite;
-  color: #4a4a4a;
+  animation: gradientLuxury 20s ease infinite;
+  color: #4c223a;
 }
 
-@keyframes gradientSoft {
+@keyframes gradientLuxury {
   0% { background-position: 0% 50%; }
   50% { background-position: 100% 50%; }
   100% { background-position: 0% 50%; }
 }
 
-/* Sistem Tipografi Soft */
+/* Sistem Tipografi Mewah */
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-serif);
-  color: #831843; /* Pink tua gelap */
+  color: #831843; /* Rose tua elegan */
 }
 
 p, span, div {
@@ -42,39 +42,72 @@ p, span, div {
   font-family: var(--font-handwriting) !important;
 }
 
-/* Glassmorphism Frosted White (Sangat Halus & Ringan) */
+/* Luxury Glassmorphism */
 .glass-panel {
-  background: var(--glass-bg);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid var(--glass-border);
-  box-shadow: 0 8px 32px 0 rgba(244, 114, 182, 0.1), inset 0 1px 0 var(--glass-highlight);
+  background: var(--luxury-glass-bg);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid var(--luxury-glass-border);
+  box-shadow: 0 10px 40px -10px rgba(225, 150, 180, 0.2), inset 0 1px 0 var(--luxury-glass-highlight);
   border-radius: 2rem;
 }
 
-/* Efek Polaroid Lucu */
+/* Polaroid Premium dengan efek kertas foto mahal */
 .polaroid {
   background: #ffffff;
-  padding: 14px 14px 50px 14px;
-  border-radius: 4px;
-  box-shadow: 0 10px 20px rgba(244, 114, 182, 0.15), inset 0 0 10px rgba(0,0,0,0.02);
-  transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+  padding: 12px 12px 60px 12px;
+  border-radius: 2px;
+  box-shadow: 0 15px 35px rgba(200, 120, 150, 0.15), inset 0 0 5px rgba(0,0,0,0.03);
+  transition: all 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+  position: relative;
+}
+
+.polaroid::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 100%);
+  pointer-events: none;
 }
 
 .polaroid:hover {
-  transform: scale(1.05) rotate(0deg) translateY(-5px) !important;
+  transform: scale(1.08) rotate(0deg) translateY(-10px) !important;
   z-index: 50;
-  box-shadow: 0 20px 40px rgba(244, 114, 182, 0.3), 0 0 20px rgba(255, 255, 255, 0.8);
+  box-shadow: 0 25px 50px rgba(200, 120, 150, 0.25), 0 0 30px rgba(255, 255, 255, 0.9);
 }
 
-/* Custom Scrollbar Cute */
+/* Custom Scrollbar Luxury */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #fff0f5; 
+  background: #fef5f7; 
 }
 ::-webkit-scrollbar-thumb {
-  background: #f9a8d4; 
+  background: #f4b6c2; 
   border-radius: 10px;
+}
+
+/* Volume Slider Styling */
+input[type=range].volume-slider {
+  -webkit-appearance: none;
+  width: 80px;
+  background: transparent;
+}
+input[type=range].volume-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  height: 12px;
+  width: 12px;
+  border-radius: 50%;
+  background: #be185d;
+  cursor: pointer;
+  margin-top: -4px;
+  box-shadow: 0 0 10px rgba(190, 24, 93, 0.5);
+}
+input[type=range].volume-slider::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 4px;
+  cursor: pointer;
+  background: rgba(244, 114, 182, 0.3);
+  border-radius: 2px;
 }

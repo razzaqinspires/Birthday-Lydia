@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 
-// Zero-Lag CSS Particle System (Hardware Accelerated)
 export default function Particles() {
   const [isMounted, setIsMounted] = useState(false);
 
@@ -12,57 +11,54 @@ export default function Particles() {
 
   if (!isMounted) return null;
 
-  // Membuat partikel acak hanya di klien untuk mencegah Hydration Error
+  // Elemen partikel mewah & estetik
   const particles = Array.from({ length: 25 }).map((_, i) => ({
     id: i,
     left: `${Math.random() * 100}%`,
-    animationDuration: `${Math.random() * 10 + 10}s`, // 10s - 20s
+    animationDuration: `${Math.random() * 12 + 10}s`,
     animationDelay: `-${Math.random() * 10}s`,
-    scale: Math.random() * 0.6 + 0.4,
-    type: Math.random() > 0.5 ? "🌸" : "✨",
+    scale: Math.random() * 0.5 + 0.3,
+    type: Math.random() > 0.6 ? "✨" : (Math.random() > 0.5 ? "🌸" : "🤍"),
   }));
 
   return (
     <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-      {/* 
-        INJEKSI CSS MURNI: Sangat ringan karena di-render oleh GPU, bukan CPU JS.
-        Ini yang membuat animasi menjadi 60fps tanpa lag sama sekali.
-      */}
       <style suppressHydrationWarning>{`
-        @keyframes floatUpSoftly {
+        @keyframes floatLuxury {
           0% {
             transform: translateY(110vh) translateX(0) rotate(0deg);
             opacity: 0;
           }
-          10% {
-            opacity: 0.8;
-          }
-          90% {
-            opacity: 0.8;
-          }
+          10% { opacity: 0.6; }
+          90% { opacity: 0.6; }
           100% {
-            transform: translateY(-10vh) translateX(50px) rotate(360deg);
+            transform: translateY(-10vh) translateX(30px) rotate(360deg);
             opacity: 0;
           }
         }
-        .particle-cute {
+        .particle-luxury {
           position: absolute;
           top: 0;
-          font-size: 1.5rem;
+          font-size: 1.8rem;
           will-change: transform, opacity;
-          animation: floatUpSoftly linear infinite;
-          filter: drop-shadow(0 2px 4px rgba(244, 114, 182, 0.3));
+          animation: floatLuxury linear infinite;
+          filter: drop-shadow(0 4px 6px rgba(255, 255, 255, 0.5));
         }
+        /* Utilitas 3D untuk Mini Game */
+        .perspective-1000 { perspective: 1000px; }
+        .preserve-3d { transform-style: preserve-3d; }
+        .backface-hidden { backface-visibility: hidden; }
+        .rotate-y-180 { transform: rotateY(180deg); }
       `}</style>
 
-      {/* Ornamen cahaya blur statis di sudut agar aesthetic */}
-      <div className="absolute top-[-10%] left-[-10%] w-96 h-96 bg-pink-300/30 rounded-full blur-[100px]"></div>
-      <div className="absolute bottom-[-10%] right-[-10%] w-96 h-96 bg-purple-300/30 rounded-full blur-[100px]"></div>
+      {/* Ornamen cahaya ambient mewah */}
+      <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-pink-200/40 rounded-full blur-[120px]"></div>
+      <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-rose-200/30 rounded-full blur-[120px]"></div>
 
       {particles.map((p) => (
         <div
           key={p.id}
-          className="particle-cute"
+          className="particle-luxury"
           style={{
             left: p.left,
             animationDuration: p.animationDuration,

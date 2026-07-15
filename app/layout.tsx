@@ -1,15 +1,17 @@
 import "./globals.css";
 import SmoothScroll from "../components/SmoothScroll";
 import type { Metadata } from "next";
-import { Cormorant_Garamond, Montserrat, Great_Vibes } from "next/font/google";
+import { Playfair_Display, Montserrat, Alex_Brush } from "next/font/google";
 
-const cormorant = Cormorant_Garamond({
+// 1. Tipografi Mewah & Elegan untuk Heading
+const playfair = Playfair_Display({
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
-  variable: "--font-cormorant",
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-playfair",
   display: "swap",
 });
 
+// 2. Tipografi Modern & Bersih untuk Paragraf
 const montserrat = Montserrat({
   subsets: ["latin"],
   weight: ["300", "400", "500"],
@@ -17,17 +19,18 @@ const montserrat = Montserrat({
   display: "swap",
 });
 
-const greatVibes = Great_Vibes({
+// 3. Tipografi Tulisan Tangan yang Sangat Mewah
+const alexBrush = Alex_Brush({
   subsets: ["latin"],
   weight: ["400"],
-  variable: "--font-great-vibes",
+  variable: "--font-alex-brush",
   display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "Happy Birthday Cici 🎀",
+  title: "Happy Birthday Lidya 🤍",
   description: "A Special Gift for March 8, 2027",
-  themeColor: "#fbcfe8",
+  themeColor: "#fce7f3",
 };
 
 export default function RootLayout({
@@ -37,7 +40,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="id" className="antialiased">
-      <body className={`${cormorant.variable} ${montserrat.variable} ${greatVibes.variable} font-sans overflow-x-hidden selection:bg-pink-300 selection:text-white`}>
+      <body className={`${playfair.variable} ${montserrat.variable} ${alexBrush.variable} font-sans overflow-x-hidden selection:bg-rose-300 selection:text-white bg-[#fef5f7]`}>
         <SmoothScroll>{children}</SmoothScroll>
       </body>
     </html>
