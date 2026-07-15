@@ -1,104 +1,111 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { Play, Pause, Music } from "lucide-react";
-import { Howl } from "howler";
-import { motion, AnimatePresence } from "framer-motion";
+import { Music, Volume2, VolumeX } from "lucide-react";
+import { motion } from "framer-motion";
 
 export default function MusicPlayer() {
-  const [isPlaying, setIsPlaying] = useState<boolean>(false);
-  const [sound, setSound] = useState<Howl | null>(null);
-  
-  // Ref untuk mencegah pemanggilan play() berkali-kali pada scroll yang sama
-  const hasInteracted = useRef(false);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const [volume, setVolume] = useState(0.5);
+  const [isMuted, setIsMuted] = useState(false);
+  const [isActive, setIsActive] = useState(false); // Penanda musik sudah jalan
 
   useEffect(() => {
-    const bgm = new Howl({
-      src: ["/audio/bgm.mp3"],
-      loop: true,
-      volume: 0.6,
-      html5: true, // Wajib true untuk menghindari bug autoplay di mobile/iOS
-    });
+    const audio = new Audio("/audio/bgm.mp3");
+    audio.loop = true;
+    audio.volume = 0.5;
+    audioRef.current = audio;
 
-    setSound(bgm);
-
-    // Engine "Smart Autoplay" - Memicu musik pada interaksi pertama (scroll/touch)
-    const handleFirstInteraction = () => {
-      if (!hasInteracted.current && !bgm.playing()) {
-        hasInteracted.current = true;
-        bgm.play();
-        setIsPlaying(true);
-        
-        // Membersihkan event listener agar memori tetap ringan setelah musik menyala
-        window.removeEventListener("scroll", handleFirstInteraction);
-        window.removeEventListener("click", handleFirstInteraction);
-        window.removeEventListener("touchstart", handleFirstInteraction);
+    // Sistem Pintar: Musik otomatis menyala pada sentuhan/interaksi pertama
+    const startAudioEngine = () => {
+      if (!isActive && audioRef.current) {
+        const playPromise = audioRef.current.play();
+        if (playPromise !== undefined) {
+          playPromise.then(() => {
+            setIsActive(true);
+            document.removeEventListener("touchstart", startAudioEngine);
+            document.removeEventListener("click", startAudioEngine);
+            document.removeEventListener("scroll", startAudioEngine);
+          }).catch(() => { /* Browser menolak, tunggu interaksi berikutnya */ });
+        }
       }
     };
 
-    // Pasang mata-mata pada aktivitas pengguna
-    // Saat mereka men-scroll ke bawah melihat Album, ini akan langsung tertrigger!
-    window.addEventListener("scroll", handleFirstInteraction, { once: true, passive: true });
-    window.addEventListener("click", handleFirstInteraction, { once: true, passive: true });
-    window.addEventListener("touchstart", handleFirstInteraction, { once: true, passive: true });
+    document.addEventListener("touchstart", startAudioEngine, { passive: true });
+    document.addEventListener("click", startAudioEngine);
+    document.addEventListener("scroll", startAudioEngine, { passive: true });
+
+    // Sistem Sinkronisasi Global (Mendengarkan Sinyal dari Video Carousel)
+    const handlePauseBGM = () => {
+      if (audioRef.current && !audioRef.current.paused) {
+        audioRef.current.pause();
+      }
+    };
+
+    const handleResumeBGM = () => {
+      if (audioRef.current && audioRef.current.paused && isActive) {
+        audioRef.current.play();
+      }
+    };
+
+    window.addEventListener("pause-bgm", handlePauseBGM);
+    window.addEventListener("resume-bgm", handleResumeBGM);
 
     return () => {
-      bgm.unload();
-      window.removeEventListener("scroll", handleFirstInteraction);
-      window.removeEventListener("click", handleFirstInteraction);
-      window.removeEventListener("touchstart", handleFirstInteraction);
+      document.removeEventListener("touchstart", startAudioEngine);
+      document.removeEventListener("click", startAudioEngine);
+      document.removeEventListener("scroll", startAudioEngine);
+      window.removeEventListener("pause-bgm", handlePauseBGM);
+      window.removeEventListener("resume-bgm", handleResumeBGM);
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current.src = "";
+      }
     };
-  }, []);
+  }, [isActive]);
 
-  const togglePlay = () => {
-    if (!sound) return;
-
-    if (isPlaying) {
-      sound.pause();
-      setIsPlaying(false);
-      // Jika user sengaja mem-pause, jangan biarkan scroll menyalakannya lagi
-      hasInteracted.current = true; 
-    } else {
-      sound.play();
-      setIsPlaying(true);
-      hasInteracted.current = true;
+  const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newVolume = parseFloat(e.target.value);
+    setVolume(newVolume);
+    if (audioRef.current) {
+      audioRef.current.volume = newVolume;
     }
+    setIsMuted(newVolume === 0);
   };
 
   return (
     <motion.div
-      initial={{ scale: 0, opacity: 0 }}
-      animate={{ scale: 1, opacity: 1 }}
-      transition={{ delay: 1.5, type: "spring" }}
-      className="fixed bottom-8 right-8 z-[100] group"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: 2, duration: 1 }}
+      className="fixed bottom-6 right-6 z-[100]"
     >
-      {/* Efek Gelombang Suara (Aura) yang menyala saat musik berputar */}
-      <AnimatePresence>
-        {isPlaying && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1.5 }}
-            exit={{ opacity: 0, scale: 0.8 }}
-            transition={{ duration: 2, repeat: Infinity, repeatType: "reverse" }}
-            className="absolute inset-0 rounded-full bg-pink-500/20 blur-md -z-10"
-          />
-        )}
-      </AnimatePresence>
-
-      <button
-        onClick={togglePlay}
-        className="glass-panel p-4 md:p-5 rounded-full flex items-center justify-center gap-3 transition-all duration-500 hover:shadow-[0_0_30px_rgba(244,114,182,0.4)] border border-pink-200/20 relative bg-black/20 backdrop-blur-xl"
-      >
-        {isPlaying ? (
-          <Pause size={22} className="text-pink-100 group-hover:scale-110 transition-transform" />
-        ) : (
-          <Play size={22} className="text-pink-100 group-hover:scale-110 transition-transform ml-1" />
+      <div className="glass-panel px-4 py-3 flex items-center gap-4 bg-white/40 border border-white/60 shadow-[0_10px_30px_rgba(200,100,150,0.15)] group relative overflow-hidden">
+        {/* Indikator Gelombang Suara (Pulse) */}
+        {isActive && !isMuted && (
+          <div className="absolute left-4 w-5 h-5 bg-pink-400/20 rounded-full animate-ping pointer-events-none"></div>
         )}
         
-        <div className="relative flex items-center justify-center">
-          <Music size={18} className={`${isPlaying ? 'text-pink-300' : 'text-gray-400'} transition-colors duration-500`} />
+        {isMuted ? (
+          <VolumeX size={18} className="text-pink-600 relative z-10" />
+        ) : (
+          <Volume2 size={18} className="text-pink-600 relative z-10" />
+        )}
+        
+        <input 
+          type="range" 
+          min="0" 
+          max="1" 
+          step="0.05" 
+          value={volume}
+          onChange={handleVolumeChange}
+          className="volume-slider relative z-10"
+        />
+
+        <div className="pl-2 border-l border-pink-200 relative z-10">
+          <Music size={16} className={`${isActive && !isMuted ? 'text-pink-600 animate-pulse' : 'text-gray-400'} transition-colors`} />
         </div>
-      </button>
+      </div>
     </motion.div>
   );
 }
