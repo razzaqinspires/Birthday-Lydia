@@ -8,7 +8,6 @@ export default function WelcomeToast() {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
-    // Munculkan notifikasi setelah 2.5 detik
     const timer = setTimeout(() => {
       setIsVisible(true);
     }, 2500);
@@ -16,10 +15,14 @@ export default function WelcomeToast() {
     return () => clearTimeout(timer);
   }, []);
 
-  // Saat notifikasi ditutup, kita paksa musik untuk menyala!
   const handleClose = () => {
     setIsVisible(false);
-    window.dispatchEvent(new Event("force-play-bgm"));
+    
+    // PEMANGGILAN DOM LANGSUNG (Diizinkan 100% oleh HP/Browser)
+    const audio = document.getElementById("global-bgm") as HTMLAudioElement;
+    if (audio && audio.paused) {
+      audio.play().catch(e => console.log("Menunggu sentuhan tambahan:", e));
+    }
   };
 
   return (
@@ -46,8 +49,8 @@ export default function WelcomeToast() {
 
             <button 
               onClick={handleClose}
-              className="text-pink-400 hover:text-pink-600 transition-colors p-1 bg-white/50 rounded-full"
-              aria-label="Tutup notifikasi dan putar musik"
+              className="text-pink-400 hover:text-pink-600 transition-colors p-1 bg-white/50 rounded-full focus:outline-none focus:ring-2 focus:ring-pink-300"
+              aria-label="Tutup notifikasi"
             >
               <X size={16} />
             </button>
