@@ -1,32 +1,16 @@
-"use client";
-
-import { motion } from "framer-motion";
-
 export default function Loading() {
   return (
-    <div className="h-screen w-screen flex flex-col justify-center items-center bg-[#0f0c29] text-white z-50 fixed top-0 left-0">
-      <motion.div
-        animate={{ 
-          scale: [1, 1.2, 1],
-          rotate: [0, 10, -10, 0]
-        }}
-        transition={{ 
-          duration: 1.5, 
-          repeat: Infinity, 
-          ease: "easeInOut" 
-        }}
-        className="text-6xl mb-6"
+    <div className="fixed inset-0 bg-[#fef5f7] z-[999] flex flex-col items-center justify-center">
+      {/* Menggunakan CSS murni untuk animasi ringan LCP < 2s */}
+      <div className="relative w-16 h-16 mb-4">
+        <div className="absolute inset-0 border-4 border-pink-200 border-t-pink-500 rounded-full animate-spin"></div>
+      </div>
+      <p 
+        className="font-sans text-sm tracking-[0.3em] uppercase text-pink-700/60 animate-pulse"
+        aria-live="polite"
       >
-        ❤️
-      </motion.div>
-      <motion.p 
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 1, repeat: Infinity, repeatType: "reverse" }}
-        className="text-lg font-medium tracking-widest uppercase text-pink-300"
-      >
-        Loading Love...
-      </motion.p>
+        Mempersiapkan Kejutan...
+      </p>
     </div>
   );
 }

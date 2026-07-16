@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-interface TimeLeft {
+export interface TimeLeft {
   days: number;
   hours: number;
   minutes: number;
@@ -16,14 +16,12 @@ export function useCountdown(targetDate: string) {
   useEffect(() => {
     setIsMounted(true);
     
-    const calculateTimeLeft = () => {
+    const calculateTimeLeft = (): TimeLeft => {
       const target = new Date(targetDate).getTime();
       const now = Date.now();
       const diff = target - now;
 
-      if (diff <= 0) {
-        return { days: 0, hours: 0, minutes: 0, seconds: 0 };
-      }
+      if (diff <= 0) return { days: 0, hours: 0, minutes: 0, seconds: 0 };
 
       return {
         days: Math.floor(diff / (1000 * 60 * 60 * 24)),
@@ -33,7 +31,6 @@ export function useCountdown(targetDate: string) {
       };
     };
 
-    // Initial set
     setTime(calculateTimeLeft());
 
     const timer = setInterval(() => {

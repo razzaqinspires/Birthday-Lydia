@@ -10,16 +10,30 @@
   --luxury-glass-border: rgba(255, 230, 240, 0.6);
   --luxury-glass-bg: rgba(255, 255, 255, 0.25);
   --luxury-glass-highlight: rgba(255, 255, 255, 0.9);
+  
+  /* Fallback warna solid untuk perangkat low-end */
+  --fallback-bg: #fff0f5;
+  --fallback-card: #ffffff;
 }
 
 body {
   margin: 0;
   padding: 0;
-  /* Palet Luxury Soft Pink / Rose Gold */
   background: linear-gradient(135deg, #fef5f7, #fdf2f8, #fce7f3, #fff0f5);
   background-size: 400% 400%;
   animation: gradientLuxury 20s ease infinite;
   color: #4c223a;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Mematikan animasi background jika perangkat dalam mode low-power / reduce-motion */
+@media (prefers-reduced-motion: reduce) {
+  body {
+    animation: none;
+    background: #fdf2f8;
+  }
 }
 
 @keyframes gradientLuxury {
@@ -28,21 +42,14 @@ body {
   100% { background-position: 0% 50%; }
 }
 
-/* Sistem Tipografi Mewah */
-h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-serif);
-  color: #831843; /* Rose tua elegan */
-}
+h1, h2, h3, h4, h5, h6 { font-family: var(--font-serif); color: #831843; }
+p, span, div, a, button, input { font-family: var(--font-sans); }
+.font-script { font-family: var(--font-handwriting) !important; }
 
-p, span, div {
-  font-family: var(--font-sans);
-}
-
-.font-script {
-  font-family: var(--font-handwriting) !important;
-}
-
-/* Luxury Glassmorphism */
+/* -------------------------------------------------------------------------
+   ADAPTIVE QUALITY SYSTEM (CSS Level)
+   ------------------------------------------------------------------------- */
+/* Default (High Quality): Full Glassmorphism */
 .glass-panel {
   background: var(--luxury-glass-bg);
   backdrop-filter: blur(24px);
@@ -52,13 +59,21 @@ p, span, div {
   border-radius: 2rem;
 }
 
-/* Polaroid Premium dengan efek kertas foto mahal */
+/* Degradasi Elegan (Low Quality): Tidak ada blur, shadow ringan */
+.quality-low .glass-panel {
+  background: var(--fallback-card);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border: 1px solid rgba(244, 114, 182, 0.3);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
 .polaroid {
   background: #ffffff;
   padding: 12px 12px 60px 12px;
-  border-radius: 2px;
+  border-radius: 4px;
   box-shadow: 0 15px 35px rgba(200, 120, 150, 0.15), inset 0 0 5px rgba(0,0,0,0.03);
-  transition: all 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+  transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.4s ease;
   position: relative;
 }
 
@@ -70,44 +85,48 @@ p, span, div {
   pointer-events: none;
 }
 
-.polaroid:hover {
-  transform: scale(1.08) rotate(0deg) translateY(-10px) !important;
+.quality-low .polaroid {
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.polaroid:hover, .polaroid:focus-within {
+  transform: scale(1.05) rotate(0deg) translateY(-5px);
   z-index: 50;
   box-shadow: 0 25px 50px rgba(200, 120, 150, 0.25), 0 0 30px rgba(255, 255, 255, 0.9);
+  outline: none;
 }
 
-/* Custom Scrollbar Luxury */
-::-webkit-scrollbar {
-  width: 6px;
-}
-::-webkit-scrollbar-track {
-  background: #fef5f7; 
-}
-::-webkit-scrollbar-thumb {
-  background: #f4b6c2; 
-  border-radius: 10px;
+/* Accessibility Focus Ring */
+:focus-visible {
+  outline: 3px solid #be185d;
+  outline-offset: 4px;
+  border-radius: 4px;
 }
 
-/* Volume Slider Styling */
+/* Scrollbar and Sliders */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #fef5f7; }
+::-webkit-scrollbar-thumb { background: #f4b6c2; border-radius: 10px; }
+
 input[type=range].volume-slider {
   -webkit-appearance: none;
+  appearance: none;
   width: 80px;
   background: transparent;
 }
 input[type=range].volume-slider::-webkit-slider-thumb {
   -webkit-appearance: none;
-  height: 12px;
-  width: 12px;
+  height: 14px;
+  width: 14px;
   border-radius: 50%;
   background: #be185d;
   cursor: pointer;
-  margin-top: -4px;
-  box-shadow: 0 0 10px rgba(190, 24, 93, 0.5);
+  margin-top: -5px;
 }
 input[type=range].volume-slider::-webkit-slider-runnable-track {
   width: 100%;
   height: 4px;
   cursor: pointer;
-  background: rgba(244, 114, 182, 0.3);
+  background: rgba(244, 114, 182, 0.4);
   border-radius: 2px;
 }

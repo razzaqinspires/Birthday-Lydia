@@ -1,172 +1,96 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { motion } from "framer-motion";
-
-// --- SYNTHESIZER SOUND ENGINE (Full Coding Tanpa File Eksternal) ---
-const playTone = (frequency: number, type: OscillatorType, duration: number, vol = 0.1) => {
-  if (typeof window === "undefined") return;
-  try {
-    const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
-    const ctx = new AudioContext();
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-    
-    osc.type = type;
-    osc.frequency.setValueAtTime(frequency, ctx.currentTime);
-    
-    gain.gain.setValueAtTime(vol, ctx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + duration);
-    
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-    
-    osc.start();
-    osc.stop(ctx.currentTime + duration);
-  } catch (e) {
-    // Abaikan jika browser tidak mendukung
-  }
-};
-
-const playFlipSound = () => playTone(600, "sine", 0.1, 0.05);
-const playMatchSound = () => {
-  playTone(523.25, "sine", 0.3, 0.05); // C5
-  setTimeout(() => playTone(659.25, "sine", 0.4, 0.05), 100); // E5
-  setTimeout(() => playTone(783.99, "sine", 0.5, 0.05), 200); // G5
-};
-const playWinSound = () => {
-  [523.25, 659.25, 783.99, 1046.50].forEach((freq, i) => {
-    setTimeout(() => playTone(freq, "triangle", 0.5, 0.1), i * 150);
-  });
-};
-// -------------------------------------------------------------------
+import { useMiniGame } from "../hooks/useMiniGame";
+import { usePerformance } from "../contexts/PerformanceContext";
 
 const CARDS_DATA = ["💖", "🎀", "🌸", "💍", "💌", "🦋"];
 
 export default function MiniGame() {
-  const [cards, setCards] = useState<{ id: number; icon: string; isFlipped: boolean; isMatched: boolean }[]>([]);
-  const [flippedIndices, setFlippedIndices] = useState<number[]>([]);
-  const [moves, setMoves] = useState(0);
-  const [isWon, setIsWon] = useState(false);
+  const { cards, moves, isWon, handleCardClick, initializeGame } = useMiniGame(CARDS_DATA);
+  const { quality } = usePerformance();
+  const animationProps = quality === "low" ? { opacity: 1, y: 0 } : undefined;
 
+  // Render sisi klien saja
   useEffect(() => {
     initializeGame();
-  }, []);
+  }, [initializeGame]);
 
-  const initializeGame = () => {
-    const shuffledCards = [...CARDS_DATA, ...CARDS_DATA]
-      .sort(() => Math.random() - 0.5)
-      .map((icon, index) => ({ id: index, icon, isFlipped: false, isMatched: false }));
-    setCards(shuffledCards);
-    setFlippedIndices([]);
-    setMoves(0);
-    setIsWon(false);
-  };
-
-  const handleCardClick = (index: number) => {
-    if (flippedIndices.length === 2 || cards[index].isFlipped || cards[index].isMatched) return;
-
-    playFlipSound();
-    const newCards = [...cards];
-    newCards[index].isFlipped = true;
-    setCards(newCards);
-
-    const newFlippedIndices = [...flippedIndices, index];
-    setFlippedIndices(newFlippedIndices);
-
-    if (newFlippedIndices.length === 2) {
-      setMoves((prev) => prev + 1);
-      checkForMatch(newFlippedIndices, newCards);
-    }
-  };
-
-  const checkForMatch = (indices: number[], currentCards: any[]) => {
-    const [first, second] = indices;
-
-    if (currentCards[first].icon === currentCards[second].icon) {
-      playMatchSound();
-      const newCards = [...currentCards];
-      newCards[first].isMatched = true;
-      newCards[second].isMatched = true;
-      setCards(newCards);
-      setFlippedIndices([]);
-
-      // Cek Menang
-      if (newCards.every((card) => card.isMatched)) {
-        setTimeout(() => {
-          playWinSound();
-          setIsWon(true);
-        }, 500);
-      }
-    } else {
-      // Tutup kembali jika tidak cocok
-      setTimeout(() => {
-        const resetCards = [...currentCards];
-        resetCards[first].isFlipped = false;
-        resetCards[second].isFlipped = false;
-        setCards(resetCards);
-        setFlippedIndices([]);
-      }, 1000);
-    }
-  };
+  if (cards.length === 0) return null; // Hydration safe
 
   return (
-    <section className="py-32 z-10 relative flex flex-col items-center px-4 w-full">
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        className="text-center mb-12"
+    <article className="py-24 md:py-32 z-10 relative flex flex-col items-center px-4 w-full max-w-[100vw]">
+      <motion.header
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={animationProps || { opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-50px" }}
+        className="text-center mb-10 md:mb-12 px-2"
       >
-        <h2 className="font-serif text-4xl md:text-5xl text-pink-900 mb-2 font-bold">Memory of Love</h2>
-        <p className="font-sans text-xs tracking-widest text-pink-700/60 uppercase">Mainkan untuk sebuah kejutan, Lidya</p>
-      </motion.div>
+        <h2 className="font-serif text-3xl md:text-5xl text-pink-900 mb-2 font-bold">Memory of Love</h2>
+        <p className="font-sans text-[10px] md:text-xs tracking-widest text-pink-700/60 uppercase">Mainkan untuk sebuah kejutan, Lidya</p>
+      </motion.header>
 
-      <div className="glass-panel p-8 md:p-12 max-w-2xl w-full flex flex-col items-center bg-white/30 border border-white shadow-[0_20px_50px_rgba(200,100,150,0.15)]">
-        <div className="flex justify-between w-full mb-8 font-sans font-medium text-pink-800">
-          <span>Langkah: {moves}</span>
-          {isWon && <span className="text-pink-500 font-bold animate-pulse">Berhasil! 🤍</span>}
-        </div>
+      <div className="glass-panel p-6 md:p-12 max-w-2xl w-full flex flex-col items-center bg-white/50 border border-white/80 shadow-[0_10px_30px_rgba(200,100,150,0.1)]">
+        <header className="flex justify-between w-full mb-6 md:mb-8 font-sans font-medium text-pink-800 text-xs md:text-sm">
+          <span aria-live="polite">Langkah: {moves}</span>
+          {isWon && <span className="text-pink-600 font-bold animate-pulse" aria-live="assertive">Berhasil, kamu hebat! 🤍</span>}
+        </header>
 
-        <div className="grid grid-cols-3 md:grid-cols-4 gap-3 md:gap-4 w-full">
+        <div 
+          className="grid grid-cols-3 md:grid-cols-4 gap-2 md:gap-4 w-full"
+          role="grid"
+          aria-label="Papan Permainan Memory Match"
+        >
           {cards.map((card, index) => (
-            <motion.div
-              key={card.id}
-              className="relative aspect-[3/4] w-full cursor-pointer perspective-1000"
-              onClick={() => handleCardClick(index)}
-              whileHover={{ scale: card.isMatched ? 1 : 1.05 }}
-              whileTap={{ scale: 0.95 }}
+            <div
+              key={index}
+              className="relative aspect-[3/4] w-full perspective-1000"
+              role="gridcell"
             >
-              <motion.div
-                className="w-full h-full absolute preserve-3d"
-                initial={false}
-                animate={{ rotateY: card.isFlipped || card.isMatched ? 180 : 0 }}
-                transition={{ duration: 0.4, type: "spring", stiffness: 260, damping: 20 }}
+              <button
+                className="w-full h-full relative focus:outline-none focus-visible:ring-4 focus-visible:ring-pink-400 rounded-lg md:rounded-xl"
+                onClick={() => handleCardClick(index)}
+                aria-label={`Kartu ${index + 1}. ${card.isFlipped || card.isMatched ? `Terbuka: ${card.icon}` : 'Tertutup'}`}
+                disabled={card.isFlipped || card.isMatched}
               >
-                {/* Bagian Belakang Kartu (Ketutup) */}
-                <div className="absolute w-full h-full backface-hidden bg-gradient-to-br from-pink-200 to-pink-300 rounded-xl border-2 border-white/50 shadow-md flex items-center justify-center">
-                  <span className="font-script text-3xl text-white opacity-50">L</span>
-                </div>
-                {/* Bagian Depan Kartu (Terbuka) */}
-                <div className="absolute w-full h-full backface-hidden rotate-y-180 bg-white rounded-xl border-2 border-pink-100 shadow-md flex items-center justify-center text-4xl md:text-5xl">
-                  {card.icon}
-                </div>
-              </motion.div>
-            </motion.div>
+                <motion.div
+                  className="w-full h-full absolute preserve-3d"
+                  initial={false}
+                  animate={{ rotateY: card.isFlipped || card.isMatched ? 180 : 0 }}
+                  transition={{ duration: 0.3, type: "tween" }} // Tween lebih ringan dari Spring
+                >
+                  {/* Backface */}
+                  <div 
+                    className="absolute w-full h-full backface-hidden bg-gradient-to-br from-pink-100 to-rose-100 rounded-lg md:rounded-xl border border-white shadow-sm flex items-center justify-center"
+                    aria-hidden="true"
+                  >
+                    <span className="font-script text-xl md:text-3xl text-pink-300">L</span>
+                  </div>
+                  {/* Frontface */}
+                  <div 
+                    className="absolute w-full h-full backface-hidden rotate-y-180 bg-white rounded-lg md:rounded-xl border border-pink-50 shadow-sm flex items-center justify-center text-3xl md:text-5xl"
+                    aria-hidden="true"
+                  >
+                    {card.icon}
+                  </div>
+                </motion.div>
+              </button>
+            </div>
           ))}
         </div>
 
         {isWon && (
           <motion.button
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             onClick={initializeGame}
-            className="mt-10 px-8 py-3 bg-pink-500 text-white font-sans font-medium rounded-full shadow-[0_5px_15px_rgba(236,72,153,0.4)] hover:bg-pink-600 transition-colors"
+            className="mt-8 md:mt-10 px-6 py-2.5 md:px-8 md:py-3 bg-pink-500 text-white font-sans text-xs md:text-sm font-medium rounded-full shadow-md hover:bg-pink-600 transition-colors focus:ring-4 focus:ring-pink-300"
           >
             Main Lagi, Sayang?
           </motion.button>
         )}
       </div>
-    </section>
+    </article>
   );
 }
