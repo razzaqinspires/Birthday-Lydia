@@ -6,10 +6,8 @@ import ProgressBar from "../components/ProgressBar";
 import Hero from "../components/Hero";
 import Countdown from "../components/Countdown";
 
-// Komponen Berat diload secara Lazy (Dynamic Import) untuk menjaga TBT < 200ms
-// Dihapus 'ssr: false' karena bertentangan dengan aturan RSC Next.js 15.
-// Komponen-komponen ini sudah dirancang hydration-safe di iterasi sebelumnya.
-
+// Komponen Berat diload secara Lazy (Dynamic Import)
+// Parameter 'ssr: false' DIHAPUS TOTAL agar mematuhi aturan ketat Next.js 15 Server Components.
 const Timeline = dynamic(() => import("../components/Timeline"), { 
   loading: () => <div className="py-32 h-[50vh] flex justify-center items-center"><div className="animate-pulse w-32 h-4 bg-pink-100 rounded-full"></div></div> 
 });
