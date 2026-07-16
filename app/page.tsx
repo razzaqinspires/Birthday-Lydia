@@ -6,8 +6,8 @@ import ProgressBar from "../components/ProgressBar";
 import Hero from "../components/Hero";
 import Countdown from "../components/Countdown";
 
-// Komponen Baru: Notifikasi
-const WelcomeToast = dynamic(() => import("../components/WelcomeToast"), { ssr: false });
+// Komponen Baru: Notifikasi (Dihapus ssr: false agar lolos build Next.js 15)
+const WelcomeToast = dynamic(() => import("../components/WelcomeToast"));
 
 // Komponen Berat diload secara Lazy (Dynamic Import)
 const Timeline = dynamic(() => import("../components/Timeline"), { 
