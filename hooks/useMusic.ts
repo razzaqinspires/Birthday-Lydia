@@ -11,53 +11,47 @@ export function useMusic(src: string) {
   useEffect(() => {
     if (typeof window === "undefined") return;
 
+    // Inisialisasi Audio
     const audio = new Audio(src);
     audio.loop = true;
     audio.volume = 0.5;
     audioRef.current = audio;
 
-    const startAudioEngine = () => {
-      if (!isActive && audioRef.current) {
-        const playPromise = audioRef.current.play();
-        if (playPromise !== undefined) {
-          playPromise
-            .then(() => {
-              setIsActive(true);
-              document.removeEventListener("touchstart", startAudioEngine);
-              document.removeEventListener("click", startAudioEngine);
-              document.removeEventListener("scroll", startAudioEngine);
-            })
-            .catch(() => { /* Autoplay terblokir, tunggu interaksi */ });
-        }
+    const attemptPlay = () => {
+      if (audioRef.current && audioRef.current.paused) {
+        audioRef.current.play().then(() => {
+          setIsActive(true);
+          document.removeEventListener("touchstart", attemptPlay);
+          document.removeEventListener("click", attemptPlay);
+        }).catch(() => {
+          // Abaikan error, tunggu klik selanjutnya
+        });
       }
     };
 
-    document.addEventListener("touchstart", startAudioEngine, { passive: true });
-    document.addEventListener("click", startAudioEngine);
-    document.addEventListener("scroll", startAudioEngine, { passive: true });
+    // Lapis 1: Pasif Listener
+    document.addEventListener("touchstart", attemptPlay, { passive: true });
+    document.addEventListener("click", attemptPlay);
 
-    // Event Global untuk sinkronisasi dengan VideoCarousel
-    const handlePauseBGM = () => {
-      if (audioRef.current && !audioRef.current.paused) {
-        audioRef.current.pause();
-      }
-    };
-
+    // Lapis 2: Sinkronisasi Global
+    const handlePauseBGM = () => audioRef.current?.pause();
     const handleResumeBGM = () => {
-      if (audioRef.current && audioRef.current.paused && isActive) {
-        audioRef.current.play().catch(() => {});
-      }
+      if (isActive && audioRef.current?.paused) audioRef.current?.play().catch(()=>{});
     };
+    
+    // Lapis 3: Force Play dari Komponen Lain (seperti WelcomeToast)
+    const handleForcePlay = () => attemptPlay();
 
     window.addEventListener("pause-bgm", handlePauseBGM);
     window.addEventListener("resume-bgm", handleResumeBGM);
+    window.addEventListener("force-play-bgm", handleForcePlay);
 
     return () => {
-      document.removeEventListener("touchstart", startAudioEngine);
-      document.removeEventListener("click", startAudioEngine);
-      document.removeEventListener("scroll", startAudioEngine);
+      document.removeEventListener("touchstart", attemptPlay);
+      document.removeEventListener("click", attemptPlay);
       window.removeEventListener("pause-bgm", handlePauseBGM);
       window.removeEventListener("resume-bgm", handleResumeBGM);
+      window.removeEventListener("force-play-bgm", handleForcePlay);
       if (audioRef.current) {
         audioRef.current.pause();
         audioRef.current.src = "";
@@ -65,13 +59,33 @@ export function useMusic(src: string) {
     };
   }, [isActive, src]);
 
+  // Fungsi Force Toggle untuk Ikon Speaker
+  const toggleMuteOrPlay = useCallback(() => {
+    if (audioRef.current) {
+      if (audioRef.current.paused) {
+        audioRef.current.play().then(() => setIsActive(true)).catch(()=>{});
+        audioRef.current.volume = 0.5;
+        setVolume(0.5);
+        setIsMuted(false);
+      } else {
+        const newMuteState = !isMuted;
+        audioRef.current.volume = newMuteState ? 0 : 0.5;
+        setVolume(newMuteState ? 0 : 0.5);
+        setIsMuted(newMuteState);
+      }
+    }
+  }, [isMuted]);
+
   const changeVolume = useCallback((newVolume: number) => {
     setVolume(newVolume);
     if (audioRef.current) {
       audioRef.current.volume = newVolume;
+      if (newVolume > 0 && audioRef.current.paused) {
+         audioRef.current.play().then(() => setIsActive(true)).catch(()=>{});
+      }
     }
     setIsMuted(newVolume === 0);
   }, []);
 
-  return { volume, isMuted, isActive, changeVolume };
+  return { volume, isMuted, isActive, toggleMuteOrPlay, changeVolume };
 }

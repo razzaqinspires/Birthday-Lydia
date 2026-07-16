@@ -8,13 +8,19 @@ export default function WelcomeToast() {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
-    // Munculkan notifikasi setelah 2.5 detik website dimuat
+    // Munculkan notifikasi setelah 2.5 detik
     const timer = setTimeout(() => {
       setIsVisible(true);
     }, 2500);
 
     return () => clearTimeout(timer);
   }, []);
+
+  // Saat notifikasi ditutup, kita paksa musik untuk menyala!
+  const handleClose = () => {
+    setIsVisible(false);
+    window.dispatchEvent(new Event("force-play-bgm"));
+  };
 
   return (
     <AnimatePresence>
@@ -39,9 +45,9 @@ export default function WelcomeToast() {
             </div>
 
             <button 
-              onClick={() => setIsVisible(false)}
-              className="text-pink-400 hover:text-pink-600 transition-colors p-1"
-              aria-label="Tutup notifikasi"
+              onClick={handleClose}
+              className="text-pink-400 hover:text-pink-600 transition-colors p-1 bg-white/50 rounded-full"
+              aria-label="Tutup notifikasi dan putar musik"
             >
               <X size={16} />
             </button>

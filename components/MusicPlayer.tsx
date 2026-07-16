@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { useMusic } from "../hooks/useMusic";
 
 export default function MusicPlayer() {
-  const { volume, isMuted, isActive, changeVolume } = useMusic("/audio/bgm.mp3");
+  const { volume, isMuted, isActive, toggleMuteOrPlay, changeVolume } = useMusic("/audio/bgm.mp3");
 
   return (
     <motion.div
@@ -16,17 +16,18 @@ export default function MusicPlayer() {
       role="region"
       aria-label="Kontrol Audio"
     >
-      <div className="glass-panel px-3 py-2 md:px-4 md:py-3 flex items-center gap-3 md:gap-4 bg-white/50 border-white/60 shadow-lg relative overflow-hidden">
+      <div className="glass-panel px-3 py-2 md:px-4 md:py-3 flex items-center gap-3 md:gap-4 bg-white/60 border border-white shadow-lg relative overflow-hidden">
         {isActive && !isMuted && (
           <div className="absolute left-3 md:left-4 w-4 h-4 md:w-5 md:h-5 bg-pink-400/20 rounded-full animate-ping pointer-events-none" aria-hidden="true"></div>
         )}
         
+        {/* Tombol ini sekarang berfungsi memaksa lagu berputar jika browser memblokirnya */}
         <button 
-          onClick={() => changeVolume(isMuted ? 0.5 : 0)}
-          aria-label={isMuted ? "Bunyikan Musik" : "Bisukan Musik"}
-          className="relative z-10 focus:outline-none focus-visible:ring-2 focus-visible:ring-pink-500 rounded-full"
+          onClick={toggleMuteOrPlay}
+          aria-label={isMuted || !isActive ? "Bunyikan Musik" : "Bisukan Musik"}
+          className="relative z-10 focus:outline-none focus-visible:ring-2 focus-visible:ring-pink-500 rounded-full p-1"
         >
-          {isMuted ? (
+          {isMuted || !isActive ? (
             <VolumeX size={16} className="text-pink-600 md:w-[18px] md:h-[18px]" />
           ) : (
             <Volume2 size={16} className="text-pink-600 md:w-[18px] md:h-[18px]" />
