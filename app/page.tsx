@@ -2,12 +2,14 @@ import dynamic from "next/dynamic";
 import ErrorBoundary from "../components/ErrorBoundary";
 import ProgressBar from "../components/ProgressBar";
 
-// Komponen Statis & Ringan (Di-render pertama kali / RSC)
+// Komponen Statis & Ringan (RSC)
 import Hero from "../components/Hero";
 import Countdown from "../components/Countdown";
 
+// Komponen Baru: Notifikasi
+const WelcomeToast = dynamic(() => import("../components/WelcomeToast"), { ssr: false });
+
 // Komponen Berat diload secara Lazy (Dynamic Import)
-// Parameter 'ssr: false' DIHAPUS TOTAL agar mematuhi aturan ketat Next.js 15 Server Components.
 const Timeline = dynamic(() => import("../components/Timeline"), { 
   loading: () => <div className="py-32 h-[50vh] flex justify-center items-center"><div className="animate-pulse w-32 h-4 bg-pink-100 rounded-full"></div></div> 
 });
@@ -31,12 +33,17 @@ export default function Home() {
     <>
       <ProgressBar />
       
+      {/* Notifikasi disambungkan di lapis teratas */}
+      <ErrorBoundary>
+        <WelcomeToast />
+      </ErrorBoundary>
+      
       <main className="relative min-h-screen">
         <ErrorBoundary>
           <Particles />
         </ErrorBoundary>
         
-        <div className="relative z-10 flex flex-col w-full pb-24 gap-16 md:gap-24">
+        <div className="relative z-10 flex flex-col w-full pb-24 gap-12 md:gap-24 overflow-x-hidden">
           <section aria-label="Beranda">
             <Hero />
           </section>
